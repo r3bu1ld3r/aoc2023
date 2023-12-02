@@ -59,9 +59,12 @@ impl From<&str> for Calibration {
 
 fn main() {
     let input = include_str!("../input/1.txt");
+    let t = std::time::Instant::now();
     let answer = input
+        .trim()
         .split("\n")
         .map(|s| Calibration::from(s))
         .fold(0, |acc, cal| acc + cal.0);
+    println!("elapsed: {}", t.elapsed().as_micros());
     println!("{}", answer);
 }

@@ -9,7 +9,12 @@ name = "day_1"
 path = "src/day_1.rs"
 
 [[bin]]
+name = "day_1_opt"
+path = "src/day_1_opt.rs"
+
+[[bin]]
 name = "day_2"
 path = "src/day_2.rs"
 
 [dependencies]
+once_cell = "1.18.0"
