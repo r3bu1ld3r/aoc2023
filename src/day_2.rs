@@ -1,3 +1,5 @@
+use std::cmp::max;
+
 const LIMIT_RED: u8 = 12;
 const LIMIT_GREEN: u8 = 13;
 const LIMIT_BLUE: u8 = 14;
@@ -75,6 +77,16 @@ impl Game {
         }
         true
     }
+
+    pub fn min_set_power(self) -> u32 {
+        let mut set = GSet::default();
+        self.sets.into_iter().for_each(|s| {
+            set.red = max(s.red, set.red);
+            set.green = max(s.green, set.green);
+            set.blue = max(s.blue, set.blue);
+        });
+        set.red as u32 * set.green as u32 * set.blue as u32
+    }
 }
 
 impl From<&str> for Game {
@@ -93,8 +105,7 @@ fn main() {
         .trim()
         .split('\n')
         .map(Game::from)
-        .filter(Game::is_valid)
-        .map(|game| game.id.0)
-        .sum::<u16>();
+        .map(Game::min_set_power)
+        .sum::<u32>();
     println!("{answer}");
 }
