@@ -11,6 +11,7 @@ fn main() {
         for (j, c) in line.chars().enumerate() {
             match c {
                 '.' => matrix[i][j] = 0,
+                '*' => matrix[i][j] = -2,
                 c if c.is_ascii_digit() => {
                     if matrix[i][j] == 0 {
                         let s = line.as_bytes();
@@ -38,6 +39,7 @@ fn main() {
     let mut queue = VecDeque::<(usize, usize)>::new();
     queue.push_back((0, 0));
     let mut useful = 0;
+    let mut gear_sum = 0;
     let mut visited = HashSet::<(usize, usize)>::new();
 
     while !queue.is_empty() {
@@ -98,9 +100,42 @@ fn main() {
                     set.insert(matrix[i - 1][j - 1]);
                 };
                 useful += set.iter().sum::<i32>();
-            }
+            },
+            -2 => {
+                let mut set = HashSet::<i32>::new();
+                if i + 1 < SIZE && matrix[i + 1][j] > 0 {
+                    set.insert(matrix[i + 1][j]);
+                };
+                if i > 0 && matrix[i - 1][j] > 0 {
+                    set.insert(matrix[i - 1][j]);
+                };
+                if i + 1 < SIZE && j + 1 < SIZE && matrix[i + 1][j + 1] > 0 {
+                    set.insert(matrix[i + 1][j + 1]);
+                };
+                if i + 1 < SIZE && j > 0 && matrix[i + 1][j - 1] > 0 {
+                    set.insert(matrix[i + 1][j - 1]);
+                };
+                if j + 1 < SIZE && matrix[i][j + 1] > 0 {
+                    set.insert(matrix[i][j + 1]);
+                };
+                if j > 0 && matrix[i][j - 1] > 0 {
+                    set.insert(matrix[i][j - 1]);
+                };
+                if i > 0 && j + 1 < SIZE && matrix[i - 1][j + 1] > 0 {
+                    set.insert(matrix[i - 1][j + 1]);
+                };
+                if i > 0 && j > 0 && matrix[i - 1][j - 1] > 0 {
+                    set.insert(matrix[i - 1][j - 1]);
+                };
+
+                if set.len() == 2 {
+                    gear_sum += set.iter().map(|n| *n).product::<i32>();
+                }
+                            
+            },
             _ => {}
         }
     }
     println!("{}", useful);
+    println!("{}", gear_sum);
 }
