@@ -3,8 +3,7 @@ use std::collections::{HashSet, VecDeque};
 
 const SIZE: usize = 140;
 
-fn main() {
-    let input = include_str!("../input/3.txt");
+fn fill_matrix(input: &str) -> Vec<Vec<i32>> {
     let mut matrix = vec![vec![0i32; 140]; 140];
 
     for (i, line) in input.trim().split('\n').enumerate() {
@@ -35,6 +34,41 @@ fn main() {
             }
         }
     }
+    matrix
+}
+
+fn collect_neighbours(matrix: &Vec<Vec<i32>>, i: usize, j: usize) -> HashSet<i32> {
+    let mut set = HashSet::<i32>::new();
+    if i + 1 < SIZE && matrix[i + 1][j] > 0 {
+        set.insert(matrix[i + 1][j]);
+    };
+    if i > 0 && matrix[i - 1][j] > 0 {
+        set.insert(matrix[i - 1][j]);
+    };
+    if i + 1 < SIZE && j + 1 < SIZE && matrix[i + 1][j + 1] > 0 {
+        set.insert(matrix[i + 1][j + 1]);
+    };
+    if i + 1 < SIZE && j > 0 && matrix[i + 1][j - 1] > 0 {
+        set.insert(matrix[i + 1][j - 1]);
+    };
+    if j + 1 < SIZE && matrix[i][j + 1] > 0 {
+        set.insert(matrix[i][j + 1]);
+    };
+    if j > 0 && matrix[i][j - 1] > 0 {
+        set.insert(matrix[i][j - 1]);
+    };
+    if i > 0 && j + 1 < SIZE && matrix[i - 1][j + 1] > 0 {
+        set.insert(matrix[i - 1][j + 1]);
+    };
+    if i > 0 && j > 0 && matrix[i - 1][j - 1] > 0 {
+        set.insert(matrix[i - 1][j - 1]);
+    };
+    set
+}
+
+fn main() {
+    let input = include_str!("../input/3.txt");
+    let matrix = fill_matrix(input);
 
     let mut queue = VecDeque::<(usize, usize)>::new();
     queue.push_back((0, 0));
@@ -74,68 +108,19 @@ fn main() {
         };
         match matrix[i][j] {
             -1 => {
-                let mut set = HashSet::<i32>::new();
-                if i + 1 < SIZE && matrix[i + 1][j] > 0 {
-                    set.insert(matrix[i + 1][j]);
-                };
-                if i > 0 && matrix[i - 1][j] > 0 {
-                    set.insert(matrix[i - 1][j]);
-                };
-                if i + 1 < SIZE && j + 1 < SIZE && matrix[i + 1][j + 1] > 0 {
-                    set.insert(matrix[i + 1][j + 1]);
-                };
-                if i + 1 < SIZE && j > 0 && matrix[i + 1][j - 1] > 0 {
-                    set.insert(matrix[i + 1][j - 1]);
-                };
-                if j + 1 < SIZE && matrix[i][j + 1] > 0 {
-                    set.insert(matrix[i][j + 1]);
-                };
-                if j > 0 && matrix[i][j - 1] > 0 {
-                    set.insert(matrix[i][j - 1]);
-                };
-                if i > 0 && j + 1 < SIZE && matrix[i - 1][j + 1] > 0 {
-                    set.insert(matrix[i - 1][j + 1]);
-                };
-                if i > 0 && j > 0 && matrix[i - 1][j - 1] > 0 {
-                    set.insert(matrix[i - 1][j - 1]);
-                };
+                let set = collect_neighbours(&matrix, i, j);
                 useful += set.iter().sum::<i32>();
-            },
+            }
             -2 => {
-                let mut set = HashSet::<i32>::new();
-                if i + 1 < SIZE && matrix[i + 1][j] > 0 {
-                    set.insert(matrix[i + 1][j]);
-                };
-                if i > 0 && matrix[i - 1][j] > 0 {
-                    set.insert(matrix[i - 1][j]);
-                };
-                if i + 1 < SIZE && j + 1 < SIZE && matrix[i + 1][j + 1] > 0 {
-                    set.insert(matrix[i + 1][j + 1]);
-                };
-                if i + 1 < SIZE && j > 0 && matrix[i + 1][j - 1] > 0 {
-                    set.insert(matrix[i + 1][j - 1]);
-                };
-                if j + 1 < SIZE && matrix[i][j + 1] > 0 {
-                    set.insert(matrix[i][j + 1]);
-                };
-                if j > 0 && matrix[i][j - 1] > 0 {
-                    set.insert(matrix[i][j - 1]);
-                };
-                if i > 0 && j + 1 < SIZE && matrix[i - 1][j + 1] > 0 {
-                    set.insert(matrix[i - 1][j + 1]);
-                };
-                if i > 0 && j > 0 && matrix[i - 1][j - 1] > 0 {
-                    set.insert(matrix[i - 1][j - 1]);
-                };
-
+                let set = collect_neighbours(&matrix, i, j);
                 if set.len() == 2 {
                     gear_sum += set.iter().map(|n| *n).product::<i32>();
                 }
-                            
-            },
+                useful += set.iter().sum::<i32>();
+            }
             _ => {}
         }
     }
-    println!("{}", useful);
-    println!("{}", gear_sum);
+    println!("part 1: {}", useful);
+    println!("part 2: {}", gear_sum);
 }
