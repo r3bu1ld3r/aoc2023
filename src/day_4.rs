@@ -21,6 +21,11 @@ fn main() {
         .map(|(win_set, card)| card.iter().filter(|n| win_set.contains(n)).count())
         .collect::<Vec<_>>();
 
+    println!("part 1: {}" ,cards
+        .iter()
+        .filter(|&n| *n > 0)
+        .fold(0, |acc, n| acc + 2u32.pow((n - 1) as u32)));
+
     let mut i = 0;
     let mut copies: Vec<u128> = vec![1; cards.len()];
     while i < cards.len() {
@@ -34,13 +39,12 @@ fn main() {
         } else {
             cards.len()
         };
-        
+
         for j in left_bound..right_bound {
             copies[j] += copies[i]
         }
         i += 1;
     }
 
-    let ans = copies.iter().sum::<u128>();
-    println!("{ans}");
+    println!("part 2: {}", copies.iter().sum::<u128>());
 }
